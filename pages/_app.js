@@ -8,7 +8,7 @@ function MyApp({ Component, pageProps }) {
          <p className='text-4xl font-bold'>NFTurvy</p>
          <div className='flex mt-4'></div>
          <Link href="/">
-           <a className="mr-4 text-pink-500">HOme</a>
+           <a className="mr-4 text-pink-500">Home</a>
          </Link>
          <Link href="/create-item">
            <a className="mr-4 text-pink-500">Sell NFT</a>
