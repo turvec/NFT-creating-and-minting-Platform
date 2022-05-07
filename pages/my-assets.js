@@ -2,13 +2,14 @@ import {ethers} from 'ethers';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Web3Modal from 'web3modal';
-import styles from '../styles/Home.module.css';
 import {nftaddress, nftmarketaddress} from '../config';
+
 import NFT from '../artifacts/contracts/NFT.sol/NFT.json';
 import NFTMarket from '../artifacts/contracts/NFTMarket.sol/NFTMarket.json';
+
 import Image from 'next/image'
 
-export default function Home() {
+export default function MyAssets() {
 
   const [nfts, setNfts] = useState([]);
   const [loadingState, setLoadingState] = useState('not-loaded');
@@ -18,12 +19,19 @@ export default function Home() {
     },[]);
   
   async function loadNFTs() {
-    const provider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai.infura.io/v3/f58da0c1f04e4013b61956c96f6f8102");
-    const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider);
-    const marketContract = new ethers.Contract(nftmarketaddress, NFTMarket.abi, provider);
+      const web3modal = new Web3Modal({
+        //   network: "mainnet",
+        //   cacheProvider: true,
+      })
+      const connection = await web3modal.connect();
+      const provider = new ethers.providers.Web3Provider(connection);
+      const signer = provider.getSigner();
+
+    const tokenContract = new ethers.Contract(nftaddress, NFT.abi, signer);
+    const marketContract = new ethers.Contract(nftmarketaddress, NFTMarket.abi, signer);
 
     //return an array of unsold market items
-    const data = await marketContract.fetchUnsoldItems();
+    const data = await marketContract.fetchMyNFTs();
 
     const items = await Promise.all(data.map(async i => {
       const tokenUri = await tokenContract.tokenURI(i.tokenId);
@@ -46,27 +54,8 @@ export default function Home() {
     
   }
 
-  async function buyNFT(nft) {
-    const web3modal = new Web3Modal();
-    const connection = await web3modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
-
-    //sign the transaction
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(nftmarketaddress, NFTMarket.abi, signer);
-
-    //get price
-    const price = ethers.utils.parseUnits(nft.price.toString(),'ether');
-
-    //make the sale
-    const transaction = await contract.createMarketSale(nftaddress, nft.tokenId , {value: price});
-    await transaction.wait();
-
-    loadNFTs();
-  }
-
   if (loadingState === 'loaded' && !nfts.length) return (
-    <h1 className="px-20 py-10 text-3xl"> No items in NFTurvy </h1>
+    <h1 className="px-20 py-10 text-3xl"> You haven't but any NFT yet </h1>
   )
 
   return (
@@ -94,8 +83,6 @@ export default function Home() {
                   <p className="text-2xl mb-4 font-bold text-white" >
                     {nft.price} ETH
                   </p>
-                  <button className="w-full bg-green-400 text-white font-bold py-2 px-12 rounded" onClick={() => buyNFT(nft)}> BUY NFT</button>
-                  
                 </div>
               </div>
            ))
