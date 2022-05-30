@@ -58,14 +58,14 @@ export default function CreatorDashboard() {
   }
 
   if (loadingState === 'loaded' && !nfts.length) return (
-    <h1 className="px-20 py-10 text-3xl"> You haven't created any NFT </h1>
+    <h1 className="px-20 py-10 text-3xl"> You have not created any NFT </h1>
   )
 
   return (
     <div>
         <div className="flex justify-center">
             <div className="px-4" style={{ maxWidth: '1600px'}}>
-            <h1 className="px-20 py-10 text-3xl"> All NFTs You've Created </h1>
+            <h1 className="px-20 py-10 text-3xl"> All NFTs You have Created </h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
                 {
                     nfts.map((nft, i) => (

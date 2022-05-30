@@ -55,7 +55,7 @@ export default function MyAssets() {
   }
 
   if (loadingState === 'loaded' && !nfts.length) return (
-    <h1 className="px-20 py-10 text-3xl"> You haven't but any NFT yet </h1>
+    <h1 className="px-20 py-10 text-3xl"> You have not but any NFT yet </h1>
   )
 
   return (
